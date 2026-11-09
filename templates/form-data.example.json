@@ -1,0 +1,82 @@
+{
+  "terminalName": "齐齐哈尔家庭烤肉（心怡路）",
+  "cooperationModeDesc": "完全包量",
+  "customerName": "河南和之也商贸有限公司",
+  "estimateTerminalCost": 21015,
+  "protocolStartTime": "2024-07-23 00:00:00",
+  "protocolEndTime": "2025-06-30 23:59:59",
+  "products": [
+    {
+      "productName": "雪花纯生8度500ml白瓶1*12纸箱",
+      "salesCount": 3,
+      "entryPrice": 68,
+      "retailPrice": 120,
+      "singleStandard": 1.66474
+    },
+    {
+      "productName": "雪花勇闯天涯(2021版)8度500ml统一标准专用白瓶1*12塑箱",
+      "salesCount": 97,
+      "entryPrice": 56,
+      "retailPrice": 84,
+      "singleStandard": 24.66667
+    },
+    {
+      "productName": "雪花经典(老雪)12度640ml统一标准专用棕瓶1*12纸箱含瓶",
+      "salesCount": 1,
+      "entryPrice": 85,
+      "retailPrice": 144,
+      "singleStandard": 1.66474
+    },
+    {
+      "productName": "勇闯天涯superX9度500ml雪花统一标准专用蓝瓶1*12纸箱",
+      "salesCount": 9,
+      "entryPrice": 60,
+      "retailPrice": 96,
+      "singleStandard": 1.66474
+    },
+    {
+      "productName": "雪花冰山勇闯天涯8度500ml统一标准专用白瓶1*12塑箱",
+      "salesCount": 0,
+      "singleStandard": 24.66667
+    },
+    {
+      "productName": "喜力silver9.5度500ml统一标准专用绿瓶1*12纸箱含瓶",
+      "salesCount": 3,
+      "entryPrice": 85,
+      "retailPrice": 144,
+      "singleStandard": 1.66474
+    },
+    {
+      "productName": "勇闯天涯superX(2024版)8度500ml统一标准专用蓝瓶1*12纸箱",
+      "salesCount": 0,
+      "singleStandard": 1.66474
+    },
+    {
+      "productName": "勇闯天涯superX(2024版)8度500ml统一标准专用蓝瓶1*12纸箱拉环盖",
+      "salesCount": 0,
+      "singleStandard": 1.66474
+    }
+  ],
+  "contractFiles": [
+    {
+      "contractCode": "",
+      "fileName": "PLX240000062534_20260930.jpg",
+      "downloadUrl": "http://aiac-dsu-1259627966.cos.ap-guangzhou.myqcloud.com/aiac/2026-09-30/2105269615527141376.jpg?sign=q-sign-algorithm%3Dsha1%26q-sign-time%3D1791529713%3B1791572913%26q-signature%3D927f12ab922d8ccba7a661719fe2c658ea7c6ec3"
+    },
+    {
+      "contractCode": "",
+      "fileName": "PLX240000062534_20260930_1.jpg",
+      "downloadUrl": "http://aiac-dsu-1259627966.cos.ap-guangzhou.myqcloud.com/aiac/2026-09-30/2105270153111085056.jpg?sign=q-sign-algorithm%3Dsha1%26q-sign-time%3D1791529713%3B1791572913%26q-signature%3D1d488bccd4fc98c7066390bcc3fff87ca8384f6b"
+    },
+    {
+      "contractCode": "",
+      "fileName": "PLX240000062534_20260930_2.jpg",
+      "downloadUrl": "http://aiac-dsu-1259627966.cos.ap-guangzhou.myqcloud.com/aiac/2026-09-30/2105270168214773760.jpg?sign=q-sign-algorithm%3Dsha1%26q-sign-time%3D1791529713%3B1791572913%26q-signature%3D908f47811ce102b3fbba01abbc076bc2ee56c9d4"
+    },
+    {
+      "contractCode": "",
+      "fileName": "PLX240000062534_20260930_3.jpg",
+      "downloadUrl": "http://aiac-dsu-1259627966.cos.ap-guangzhou.myqcloud.com/aiac/2026-09-30/2105270173398933504.jpg?sign=q-sign-algorithm%3Dsha1%26q-sign-time%3D1791529713%3B1791572913%26q-signature%3Dc0d1ced80865b81f1f1d498b4e431ca5a12d0a19"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "riskLevel": "高风险",
+  "summary": "共5项风险。高风险3项：预计销量、进店价、零售价不一致；中风险1项：终端名称不一致；低风险1项：合作方式不一致。",
+  "checkRes": [
+    {
+      "fieldCode": "TPM-豫HN-001",
+      "fieldName": "经销商名称",
+      "riskLevel": "通过",
+      "auditDesc": ""
+    },
+    {
+      "fieldCode": "TPM-豫HN-002",
+      "fieldName": "终端名称",
+      "riskLevel": "中风险",
+      "auditDesc": "合同中终端名称为'齐齐哈尔烤肉'，表单中为'齐齐哈尔家庭烤肉（心怡路）'，不一致"
+    },
+    {
+      "fieldCode": "TPM-豫HN-003",
+      "fieldName": "协议有效期",
+      "riskLevel": "通过",
+      "auditDesc": ""
+    },
+    {
+      "fieldCode": "TPM-豫HN-004",
+      "fieldName": "合作方式",
+      "riskLevel": "低风险",
+      "auditDesc": "合同中合作方式为'专营'，表单中为'完全包量'，不一致"
+    },
+    {
+      "fieldCode": "TPM-豫HN-005",
+      "fieldName": "预计总投入",
+      "riskLevel": "通过",
+      "auditDesc": ""
+    },
+    {
+      "fieldCode": "TPM-豫HN-006",
+      "fieldName": "预计销量",
+      "riskLevel": "高风险",
+      "auditDesc": "合同中预计销量为空，表单中预计销量合计为113，不一致"
+    },
+    {
+      "fieldCode": "TPM-豫HN-007",
+      "fieldName": "进店价",
+      "riskLevel": "高风险",
+      "auditDesc": "合同与表单进店价不一致：勇闯天涯superX（合同66，表单60）、勇闯天涯（合同60，表单56）"
+    },
+    {
+      "fieldCode": "TPM-豫HN-008",
+      "fieldName": "零售价",
+      "riskLevel": "高风险",
+      "auditDesc": "合同与表单零售价不一致：勇闯天涯（合同6元/瓶，表单84元/件即7元/瓶）"
+    },
+    {
+      "fieldCode": "TPM-豫HN-009",
+      "fieldName": "随量折扣",
+      "riskLevel": "通过",
+      "auditDesc": ""
+    },
+    {
+      "fieldCode": "TPM-豫HN-010",
+      "fieldName": "固定折扣",
+      "riskLevel": "通过",
+      "auditDesc": ""
+    },
+    {
+      "fieldCode": "TPM-豫HN-011",
+      "fieldName": "其他折扣",
+      "riskLevel": "通过",
+      "auditDesc": ""
+    }
+  ]
+}

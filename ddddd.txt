@@ -1,0 +1,7 @@
+curl "http://new-api.crb.cn/v1/chat/completions" \
+  -H "Authorization: Bearer sk-t0zBvsbpO2cK0n92ZP00Y3yl0sMeEFaJjN3PDWg0T2KbAkNS" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek-v4.1-flash",
+    "messages": [{"role": "user", "content": "你是谁？"}]
+  }'

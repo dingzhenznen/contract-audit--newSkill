@@ -1,0 +1,47 @@
+{
+  "id": "04-date-normalize",
+  "title": "日期区间：按 outputDesc 归一化后比对",
+  "tier": "regression",
+  "prompt": "按这个规则集检查这几份合同",
+  "ruleSet": {
+    "ruleSetCode": "RULE-EV-004",
+    "ruleSetName": "Eval 日期规则集",
+    "businessSystem": "TPM",
+    "description": "skill 回归测试用",
+    "items": [
+      {
+        "fieldCode": "TPM-EV-003",
+        "fieldName": "协议有效期",
+        "helpDesc": "关键字'有效期间自'后提取,只提取1次，未识别到信息时显示空字符串",
+        "outputDesc": "{ \"协议有效期\":\"XXXX年XX月X日-XXXX年XX月X日\" }",
+        "judgeRule": "若合同文件中“协议有效期”与表单内容中“协议有效期”不一致，则判断为“中风险”"
+      }
+    ]
+  },
+  "form": {
+    "terminalName": "齐齐哈尔家庭烤肉（心怡路）",
+    "cooperationModeDesc": "完全包量",
+    "customerName": "河南和之也商贸有限公司",
+    "estimateTerminalCost": 21015,
+    "protocolStartTime": "2024-07-23 00:00:00",
+    "protocolEndTime": "2025-07-31 23:59:59",
+    "products": [],
+    "contractFiles": [
+      { "contractCode": "EV-2026-004", "fileName": "page-1.png", "downloadUrl": "@fixture:page-1.png" }
+    ]
+  },
+  "expect": {
+    "riskLevel": "中风险",
+    "summary": { "equals": "共1项风险。中风险1项：协议有效期不一致。" },
+    "checkResCount": 1,
+    "fieldOrder": ["TPM-EV-003"],
+    "items": [
+      {
+        "fieldCode": "TPM-EV-003",
+        "riskLevel": "中风险",
+        "auditDescContains": ["2024年07月23日-2025年06月30日", "2025年07月31日", "不一致"],
+        "auditDescNotContains": ["2024-07-23"]
+      }
+    ]
+  }
+}

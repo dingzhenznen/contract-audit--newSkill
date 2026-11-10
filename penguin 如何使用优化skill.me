@@ -1,0 +1,50 @@
+能只改名字。 两种方法的"输入契约"不一样，只把 agent-optimization 换成 skillopt-rsi-toolkit，参
+  数会自相矛盾。
+
+  差在哪
+
+  - 默认循环（你贴的这版）：runs（每个 Case 跑几次）、candidate_round_limit、desired_score，以
+    及"严格更高才保留 + 追加 scoreboard.yaml"这套判据，都是 agent-optimization 的契约。
+
+  - 论文工具包（SkillOpt / ACE / AWM 等）：没有 round limit 和 desired score，换成
+    test_repetitions（每个冻结 State 在测试集上完整测几次）；预算、训练数据、选择集、冻结方式全部
+    由该 Skill 自己定。ACE 的 SKILL.md 甚至明确写了"target score 或 round limit 不是 ACE 的设置，
+    要说明并略去"。
+
+  - 评测路径也不同：默认方法强制每个子会话用 agent-evaluation；ACE/AWM 用自己的 references/
+    evaluation.md 和 worker 协议，不一定走 agent-evaluation。
+
+  - 记录也不同：默认方法追加 scoreboard.yaml；SkillOpt 报告 baseline / final / mean / std /
+    final_minus_baseline，不写 scoreboard。
+
+  正确做法
+
+  在「优化」标签页的方法下拉里选工具包，UI 会自动换成另一套表单和提示词（rsiOptimizeTail，
+  packages/web/src/lib/strings.ts:5679）。手写的话，应该长这样：
+
+  请使用 `skillopt-rsi-toolkit` 技能，从这套 Benchmark 出发对被测智能体运行它的方法。
+
+  - test_agent_id：`penguin_support`
+  - benchmark_id：`example-benchmark`（Project 的 `benchmarks/example-benchmark/`）
+  - test_repetitions：`2`
+  - provider：`<基线里的 provider>`
+  - model_id：`<基线里的 model_id>`
+
+  按技能的定义运行：训练/测试数据、预算、选择集、冻结与记录方式都以技能为准。
+  被测智能体固定使用这组 provider 与模型，thinking_level 沿用它自己的配置。
+  结束时报告基线分、最终分、保留的版本，以及方法改了什么。
+
+  两个额外前提
+
+  - 优化器 Agent 必须装了对应插件，否则会提示缺 Skill（「插件市场」里给 penguin_support 之外的那个
+    优化器 Agent 安装）。
+
+  - example-benchmark 得满足该方法的形态：SkillOpt 需要 Train/Test（可选 validation）拆分；如果它
+    只有一批 Case、没有训练/测试划分，ACE 或 AWM 更合适——它们直接把已发布 Benchmark 的 Case 当训练
+    流。
+
+  - 如果你要的是"优化已有 Skill 文本"，用 skillopt / openskill / skilladam / trace；ACE 是规则
+    playbook、AWM 是流程记忆，都会在 Target 里新建一个 Skill 槽位，而不是改你原来那篇。
+
+  一句话：方法名、参数、评测协议、产物记录要一起换，只改第一行的 skill 名不行。你现在这个
+  Benchmark 有 Train/Test 划分吗？有的话我可以按 SkillOpt 帮你把完整提示词写准。

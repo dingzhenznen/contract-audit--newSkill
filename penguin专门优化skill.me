@@ -1,0 +1,40 @@
+penguin  skillopt-rsi-toolkit   opt 的三个 优化 其他的 添加
+
+
+
+
+可以，但它们不是"改写你已有的那个 Skill"，而是"学出一个新的 Skill 槽位"。
+
+  ACE
+
+  - 学到的产物：STATE/skills/ace-playbook/，里面有 SKILL.md 和 rules.yaml（SKILL.md:47）。
+  - 方法：Target 用当前 playbook 解一道训练题 → Reflector 读轨迹做诊断 → Curator 把 playbook 缺的
+    教训追加成一条条规则（带 helpful / harmful 计数）。
+
+  - 特点：逐样本增量累积，不做候选版本选择；规则条目有增删和打分，不是整篇重写。适合沉淀"该做什
+    么、不该做什么"的规则。
+
+  AWM
+
+  - 学到的产物：STATE/skills/awm-workflows/，里面有 SKILL.md 和 workflows.md（SKILL.md 的 MEMORY
+    行）。
+
+  - 方法：从成功轨迹里归纳可复用的流程（run → judge → induce → integrate），支持 online_train（在
+    Benchmark 的 case 流上在线学）和 offline（从你提供的经验池里一次归纳）。
+
+  - 特点：学的是"步骤/流程"，更像操作手册；只从成功案例归纳，不把失败当成功。
+
+  和 SkillOpt 的区别
+
+  - SkillOpt / OpenSkill / SkillAdam：把你已有的 Skill 文本当优化对象，反复提出有界编辑、筛选、留
+    下更好的那一版。
+
+  - ACE / AWM：在 Target 里新建一个专用 Skill承载学到的规则/流程，原来的 Skill 基本不动。
+  - 所以如果你的目标是"把我写好的 SKILL.md 改得更好"，用 SkillOpt 一类更贴；如果是"让 Agent 从跑过
+    的任务里自己长出一套规则/流程"，ACE/AWM 更贴。
+
+  现在能不能用
+
+  能。ACE 和 AWM 是 0.2.15 就发布的预装工具包，「优化 → 方法」里应该能看到。前提是：优化器 Agent
+  装了对应插件（旧 Agent 需在插件市场手动安装），且有一个 status = "published" 的 Benchmark。它们
+  都需要 run_subagent，因此必须在顶层 Session 里跑。

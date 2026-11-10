@@ -1,0 +1,47 @@
+{
+  "id": "02-mismatch-single",
+  "title": "单值不一致：等级来自 judgeRule，auditDesc 套模板",
+  "tier": "smoke",
+  "prompt": "按这个规则集检查这几份合同",
+  "ruleSet": {
+    "ruleSetCode": "RULE-EV-002",
+    "ruleSetName": "Eval 单值规则集",
+    "businessSystem": "TPM",
+    "description": "skill 回归测试用",
+    "items": [
+      {
+        "fieldCode": "TPM-EV-001",
+        "fieldName": "经销商名称",
+        "helpDesc": "仅在合同文件中，关键字'甲方（供货方）：'后提取,只提取1次，未识别到信息时显示空字符串",
+        "outputDesc": "{ \"经销商名称\":\"\" }",
+        "judgeRule": "若合同文件中“经销商名称”与表单内容中“经销商名称”不一致，则判断为“中风险”"
+      }
+    ]
+  },
+  "form": {
+    "terminalName": "齐齐哈尔家庭烤肉（心怡路）",
+    "cooperationModeDesc": "完全包量",
+    "customerName": "河南和之也商贸有限责任公司",
+    "estimateTerminalCost": 21015,
+    "protocolStartTime": "2024-07-23 00:00:00",
+    "protocolEndTime": "2025-06-30 23:59:59",
+    "products": [],
+    "contractFiles": [
+      { "contractCode": "EV-2026-002", "fileName": "page-1.png", "downloadUrl": "@fixture:page-1.png" }
+    ]
+  },
+  "expect": {
+    "riskLevel": "中风险",
+    "summary": { "equals": "共1项风险。中风险1项：经销商名称不一致。" },
+    "checkResCount": 1,
+    "fieldOrder": ["TPM-EV-001"],
+    "items": [
+      {
+        "fieldCode": "TPM-EV-001",
+        "riskLevel": "中风险",
+        "auditDescEquals": "合同中经销商名称为'河南和之也商贸有限公司'，表单中为'河南和之也商贸有限责任公司'，不一致"
+      }
+    ],
+    "citationsFromTruth": true
+  }
+}

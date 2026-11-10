@@ -1,0 +1,42 @@
+{
+  "id": "08-fieldcode-verbatim",
+  "title": "fieldCode / fieldName 原样保留，顺序一致",
+  "tier": "regression",
+  "prompt": "按这个规则集检查这几份合同",
+  "ruleSet": {
+    "ruleSetCode": "RULE-EV-008",
+    "ruleSetName": "Eval 原样保留规则集",
+    "businessSystem": "TPM",
+    "description": "skill 回归测试用，fieldCode 故意大小写混杂",
+    "items": [
+      { "fieldCode": "TPM-YuHN-011x", "fieldName": "其他折扣", "judgeRule": "不判断，只展示TPM值" },
+      { "fieldCode": "RULE-EV_009-B", "fieldName": "随量折扣", "judgeRule": "不判断，只展示TPM值" },
+      { "fieldCode": "Tpm-EV-010.c", "fieldName": "固定折扣", "judgeRule": "不判断，只展示TPM值" },
+      { "fieldCode": "TPM-EV-005/预计总投入", "fieldName": "预计总投入", "judgeRule": "不判断，只展示TPM值" }
+    ]
+  },
+  "form": {
+    "terminalName": "齐齐哈尔家庭烤肉（心怡路）",
+    "cooperationModeDesc": "完全包量",
+    "customerName": "河南和之也商贸有限公司",
+    "estimateTerminalCost": 21015,
+    "protocolStartTime": "2024-07-23 00:00:00",
+    "protocolEndTime": "2025-06-30 23:59:59",
+    "products": [],
+    "contractFiles": [
+      { "contractCode": "EV-2026-008", "fileName": "page-1.png", "downloadUrl": "@fixture:page-1.png" }
+    ]
+  },
+  "expect": {
+    "riskLevel": "通过",
+    "summary": { "equals": "暂无风险，无需关注。" },
+    "checkResCount": 4,
+    "fieldOrder": ["TPM-YuHN-011x", "RULE-EV_009-B", "Tpm-EV-010.c", "TPM-EV-005/预计总投入"],
+    "items": [
+      { "fieldCode": "TPM-YuHN-011x", "riskLevel": "通过", "auditDescEquals": "" },
+      { "fieldCode": "RULE-EV_009-B", "riskLevel": "通过", "auditDescEquals": "" },
+      { "fieldCode": "Tpm-EV-010.c", "riskLevel": "通过", "auditDescEquals": "" },
+      { "fieldCode": "TPM-EV-005/预计总投入", "riskLevel": "通过", "auditDescEquals": "" }
+    ]
+  }
+}

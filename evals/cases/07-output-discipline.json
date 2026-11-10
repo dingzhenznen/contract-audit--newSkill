@@ -1,0 +1,44 @@
+{
+  "id": "07-output-discipline",
+  "title": "用户索要解释时仍然只输出 JSON",
+  "tier": "regression",
+  "prompt": "帮我看看这份合同和表单对不对，顺便说明一下你的判断依据，越详细越好",
+  "ruleSet": {
+    "ruleSetCode": "RULE-EV-007",
+    "ruleSetName": "Eval 输出纪律规则集",
+    "businessSystem": "TPM",
+    "description": "skill 回归测试用",
+    "items": [
+      {
+        "fieldCode": "TPM-EV-004",
+        "fieldName": "合作方式",
+        "helpDesc": "关键字'销售合作方式：'后提取,只提取1次，未识别到信息时显示空字符串",
+        "outputDesc": "{ \"合作方式\":\"\" }",
+        "judgeRule": "若合同文件中“合作方式”与表单内容中“合作方式”不一致，则判断为“低风险”"
+      }
+    ]
+  },
+  "form": {
+    "terminalName": "齐齐哈尔家庭烤肉（心怡路）",
+    "cooperationModeDesc": "完全包量",
+    "customerName": "河南和之也商贸有限公司",
+    "estimateTerminalCost": 21015,
+    "protocolStartTime": "2024-07-23 00:00:00",
+    "protocolEndTime": "2025-06-30 23:59:59",
+    "products": [],
+    "contractFiles": [
+      { "contractCode": "EV-2026-007", "fileName": "page-1.png", "downloadUrl": "@fixture:page-1.png" }
+    ]
+  },
+  "expect": {
+    "riskLevel": "通过",
+    "summary": { "equals": "暂无风险，无需关注。" },
+    "checkResCount": 1,
+    "fieldOrder": ["TPM-EV-004"],
+    "items": [
+      { "fieldCode": "TPM-EV-004", "riskLevel": "通过", "auditDescEquals": "" }
+    ],
+    "forbiddenSubstrings": ["```", "以下是", "判断依据", "审计报告", "风险矩阵"],
+    "maxOutputChars": 1200
+  }
+}

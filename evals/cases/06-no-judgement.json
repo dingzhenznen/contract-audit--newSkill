@@ -1,0 +1,40 @@
+{
+  "id": "06-no-judgement",
+  "title": "不判断类规则：恒通过、auditDesc 留空",
+  "tier": "smoke",
+  "prompt": "跑一下合同审计",
+  "ruleSet": {
+    "ruleSetCode": "RULE-EV-006",
+    "ruleSetName": "Eval 不判断规则集",
+    "businessSystem": "TPM",
+    "description": "skill 回归测试用",
+    "items": [
+      { "fieldCode": "TPM-EV-005", "fieldName": "预计总投入", "judgeRule": "不判断，只展示TPM值" },
+      { "fieldCode": "TPM-EV-009", "fieldName": "随量折扣", "judgeRule": "不判断，只展示TPM值" },
+      { "fieldCode": "TPM-EV-010", "fieldName": "固定折扣", "judgeRule": "不判断，只展示TPM值" }
+    ]
+  },
+  "form": {
+    "terminalName": "齐齐哈尔家庭烤肉（心怡路）",
+    "cooperationModeDesc": "完全包量",
+    "customerName": "河南和之也商贸有限公司",
+    "estimateTerminalCost": 21015,
+    "protocolStartTime": "2024-07-23 00:00:00",
+    "protocolEndTime": "2025-06-30 23:59:59",
+    "products": [],
+    "contractFiles": [
+      { "contractCode": "EV-2026-006", "fileName": "page-1.png", "downloadUrl": "@fixture:page-1.png" }
+    ]
+  },
+  "expect": {
+    "riskLevel": "通过",
+    "summary": { "equals": "暂无风险，无需关注。" },
+    "checkResCount": 3,
+    "fieldOrder": ["TPM-EV-005", "TPM-EV-009", "TPM-EV-010"],
+    "items": [
+      { "fieldCode": "TPM-EV-005", "riskLevel": "通过", "auditDescEquals": "" },
+      { "fieldCode": "TPM-EV-009", "riskLevel": "通过", "auditDescEquals": "" },
+      { "fieldCode": "TPM-EV-010", "riskLevel": "通过", "auditDescEquals": "" }
+    ]
+  }
+}

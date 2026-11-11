@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PDF 转图片</title>
+<style>
+  :root { --bg:#0f1115; --panel:#171a21; --line:#2a2f3a; --text:#e6e8ee; --muted:#98a0b3; --accent:#5b9dff; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif; }
+  main { max-width: 1080px; margin: 0 auto; padding: 48px 20px 80px; }
+  h1 { font-size: 26px; margin: 0 0 6px; }
+  p.sub { color: var(--muted); margin: 0 0 28px; }
+  form { background: var(--panel); border:1px solid var(--line); border-radius: 12px; padding: 20px; display:grid; gap:14px; }
+  label { display:grid; gap:6px; color:var(--muted); font-size:12px; }
+  input, select { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--line); background:#0c0e13; color:var(--text); font-size:14px; }
+  input:focus, select:focus { outline:none; border-color:var(--accent); }
+  .row { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px; }
+  button { padding:11px 18px; border:none; border-radius:8px; background:var(--accent); color:#06101f; font-weight:600; font-size:14px; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  #status { min-height:20px; color:var(--muted); font-size:13px; }
+  #status.error { color:#ff7b7b; }
+  #result { margin-top: 24px; display:grid; gap:18px; }
+  .meta { display:flex; flex-wrap:wrap; gap:12px; align-items:center; color:var(--muted); font-size:13px; }
+  .meta a { color: var(--accent); }
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:16px; }
+  figure { margin:0; background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  figure img { display:block; width:100%; height:auto; background:#fff; }
+  figcaption { padding:8px 12px; font-size:12px; color:var(--muted); display:flex; justify-content:space-between; }
+  @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>PDF 转图片</h1>
+  <p class="sub">输入一个可公开访问的 PDF 链接，服务会逐页渲染成 PNG / JPG。</p>
+
+  <form id="form">
+    <label>PDF 链接
+      <input id="url" type="url" placeholder="https://example.com/sample.pdf" required />
+    </label>
+    <div class="row">
+      <label>清晰度（scale）
+        <select id="scale">
+          <option value="1">1x 约 72 DPI</option>
+          <option value="2" selected>2x 约 144 DPI</option>
+          <option value="3">3x 约 216 DPI</option>
+        </select>
+      </label>
+      <label>格式
+        <select id="format">
+          <option value="png" selected>PNG</option>
+          <option value="jpg">JPG</option>
+        </select>
+      </label>
+      <label>页面（可选）
+        <input id="pages" placeholder="如 1-3,5，留空为全部" />
+      </label>
+    </div>
+    <div><button id="submit" type="submit">开始转换</button></div>
+    <div id="status"></div>
+  </form>
+
+  <div id="result"></div>
+</main>
+
+<script>
+const form = document.getElementById('form');
+const statusEl = document.getElementById('status');
+const resultEl = document.getElementById('result');
+const submit = document.getElementById('submit');
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  resultEl.innerHTML = '';
+  statusEl.className = '';
+  statusEl.textContent = '正在下载并渲染 PDF…';
+  submit.disabled = true;
+
+  const payload = {
+    url: document.getElementById('url').value.trim(),
+    scale: Number(document.getElementById('scale').value),
+    format: document.getElementById('format').value,
+  };
+  const pages = document.getElementById('pages').value.trim();
+  if (pages) payload.pages = pages;
+
+  try {
+    const response = await fetch('/api/convert', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || '转换失败');
+
+    statusEl.textContent = `完成：共 ${data.totalPagesInPdf} 页，已生成 ${data.pageCount} 张图片，15 分钟内可访问。`;
+    render(data);
+  } catch (error) {
+    statusEl.className = 'error';
+    statusEl.textContent = error.message;
+  } finally {
+    submit.disabled = false;
+  }
+});
+
+function render(data) {
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  meta.innerHTML = `<span>任务：${data.jobId}</span>`;
+  if (data.zipUrl) {
+    const zip = document.createElement('a');
+    zip.href = data.zipUrl;
+    zip.textContent = '下载全部（ZIP）';
+    meta.appendChild(zip);
+  }
+  resultEl.appendChild(meta);
+
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+  for (const page of data.pages) {
+    const figure = document.createElement('figure');
+    const img = document.createElement('img');
+    img.src = page.url;
+    img.loading = 'lazy';
+    img.alt = `第 ${page.page} 页`;
+    const caption = document.createElement('figcaption');
+    const label = document.createElement('span');
+    label.textContent = `第 ${page.page} 页`;
+    const info = document.createElement('span');
+    info.textContent = page.width ? `${page.width}×${page.height}` : '';
+    caption.append(label, info);
+    figure.append(img, caption);
+    grid.appendChild(figure);
+  }
+  resultEl.appendChild(grid);
+}
+</script>
+</body>
+</html>

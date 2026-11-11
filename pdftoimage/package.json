@@ -1,0 +1,22 @@
+{
+  "name": "pdf-to-image-service",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Express service that downloads a PDF URL and renders each page to PNG/JPG",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test/smoke.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.100",
+    "archiver": "^8.0.0",
+    "express": "^5.3.0",
+    "pdf-to-img": "^6.3.0"
+  }
+}

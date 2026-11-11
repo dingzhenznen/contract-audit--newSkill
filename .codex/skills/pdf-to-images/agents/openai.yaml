@@ -1,0 +1,4 @@
+interface:
+  display_name: "PDF to Images + OCR"
+  short_description: "Convert a PDF into images and recognize the text"
+  default_prompt: "把这个 PDF 转成图片，并用 qwen3.5-ocr 识别每一页的文字"

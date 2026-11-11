@@ -26,28 +26,28 @@ agent_created: true
 | 附件列表 + 电子影像 | JSON 数组字符串 | 合并为统一文件列表，再分类 |
 | 稽核要素 | JSON | 取「稽核行号」，原样写回判断结果 |
 
-报账单样例、字段别名与空值兜底见 `references/01-receive-inputs.md`。
+报账单样例、字段别名与空值兜底见 `references/01-input-and-normalization.md`。
 
 ## 二、九步流程
 
 | 步骤 | 动作 | 一句话规则 | 详细规则 |
 |------|------|-----------|----------|
-| 1 | 入口接收 | 收齐报账单、附件列表、电子影像、稽核要素和用户问题 | `references/01-receive-inputs.md` |
-| 2 | 附件合并去重 | 三路文件汇总成一个 `file_list`，按「文件名 + URL 主干」去重 | `references/02-merge-attachments.md` |
-| 3 | 文件分类 | 把统一文件分成「合同」「合同补充协议」「其他附件」 | `references/03-classify-files.md` |
-| 4 | 报账单字段提取 | 取户名、账号、合同名称、业务类别并清洗；稽核行号取自稽核要素 | `references/04-extract-report-fields.md` |
-| 5 | 供应商信息提取 | 从补充协议（或合同）中提取「供应商名称 + 供应商账号」 | `references/05-extract-supplier-info.md` |
-| 6 | 白名单判断 | 命中白名单企业或名称过短，直接 PASS，不再读合同 | `references/06-whitelist.md` |
-| 7 | 协议数量分流 | 1 份直接用；多份先清洗、合并、去空；无补充协议回退合同 | `references/07-protocol-branching.md` |
-| 8 | 核心质检 | 户名 = 供应商名称，账号 = 供应商账号；多份允许任意一条记录匹配 | `references/08-core-check.md` |
-| 9 | 输出判定 | 全通过输出 PASS；否则 HOLD，并带问题分类与附件链接 | `references/09-output-verdict.md` |
+| 1 | 入口接收 | 收齐报账单、附件列表、电子影像、稽核要素和用户问题 | `references/01-input-and-normalization.md` |
+| 2 | 附件合并去重 | 三路文件汇总成一个 `file_list`，按「文件名 + URL 主干」去重 | `references/02-merge-and-classify.md` |
+| 3 | 文件分类 | 把统一文件分成「合同」「合同补充协议」「其他附件」 | `references/02-merge-and-classify.md` |
+| 4 | 报账单字段提取 | 取户名、账号、合同名称、业务类别并清洗；稽核行号取自稽核要素 | `references/01-input-and-normalization.md` |
+| 5 | 供应商信息提取 | 从补充协议（或合同）中提取「供应商名称 + 供应商账号」 | `references/03-supplier-extraction.md` |
+| 6 | 白名单判断 | 命中白名单企业或名称过短，直接 PASS，不再读合同 | `references/04-whitelist-and-branching.md` |
+| 7 | 协议数量分流 | 1 份直接用；多份先清洗、合并、去空；无补充协议回退合同 | `references/04-whitelist-and-branching.md` |
+| 8 | 核心质检 | 户名 = 供应商名称，账号 = 供应商账号；多份允许任意一条记录匹配 | `references/05-comparison.md` |
+| 9 | 输出判定 | 全通过输出 PASS；否则 HOLD，并带问题分类与附件链接 | `references/06-output.md` |
 
 ## 三、判定总原则
 
 - **白名单优先。** 命中白名单或名称长度 < 4，直接 PASS，不进入附件处理。
 - **补充协议优先，合同补缺。** 有补充协议先读补充协议；某字段为空时再用合同同名信息补齐。
 - **多份协议允许任意一条匹配。** 名称与账号在同一条记录中同时相等，即视为匹配。
-- **空值口径分两种。** 单份协议、严格比对分支按字面相等；附件兜底分支（提示词明确写「为空则默认对应字段无误」）空字段不判错。按 `references/08-core-check.md` 的分支表执行。
+- **空值口径分两种。** 单份协议、严格比对分支按字面相等；附件兜底分支（提示词明确写「为空则默认对应字段无误」）空字段不判错。按 `references/05-comparison.md` 的分支表执行。
 - **只输出 JSON。** 不写报告、不写表格、不写「以下是质检结果」。
 - **不臆造合同值。** 提取不到就留空；空值参与比对，不得用报账单值反填合同值。
 
@@ -72,7 +72,7 @@ agent_created: true
 - `问题列表`：PASS 时必须是 `[]`；HOLD 时每类问题一条，名称与账号同时不一致合并为一条。
 - `问题描述`：必须包含报账单值、合同值、违反了哪条规则、来源附件链接。
 
-完整字段与示例见 `references/09-output-verdict.md`。
+完整字段与示例见 `references/06-output.md`。
 
 ## 五、硬约束
 
@@ -87,20 +87,17 @@ agent_created: true
 
 ## 六、文件索引
 
-| 文件 | 内容 |
-|------|------|
-| `references/01-receive-inputs.md` | 四类输入、报账单字段别名、稽核要素解析、空值兜底 |
-| `references/02-merge-attachments.md` | 附件三路合并、递归取文件对象、排除分支、去重键、异常兜底 |
-| `references/03-classify-files.md` | 文件类型路由、PDF/图片/文档处理、分类提示词、对公预付款特例 |
-| `references/04-extract-report-fields.md` | 报账单户名/账号/合同名称/业务类别提取与清洗 |
-| `references/05-extract-supplier-info.md` | 供应商名称与账号的提取优先级、过滤规则、多账号拆分 |
-| `references/06-whitelist.md` | 白名单关键词、名称长度阈值、PASS 输出 |
-| `references/07-protocol-branching.md` | 1 份 / 多份 / 0 份补充协议的分流与回退合同 |
-| `references/08-core-check.md` | 两条核心规则、归一化、单条/多条匹配、空值口径、判级 |
-| `references/09-output-verdict.md` | 输出 JSON 结构、问题分类、描述模板、PASS/HOLD 示例 |
-| `templates/input.example.json` | 四类输入的最小样例 |
-| `templates/result-pass.example.json` | PASS 输出样例 |
-| `templates/result-hold.example.json` | HOLD 输出样例 |
+| 文件 | 覆盖步骤 | 何时读 / 内容 |
+|------|----------|----------------|
+| `references/01-input-and-normalization.md` | 1 + 4 | 开始执行时读：四类输入、稽核要素、字段别名、补充信息兜底、清洗 |
+| `references/02-merge-and-classify.md` | 2 + 3 | 拿到附件后读：三路合并、去重、文件分类、对公预付款特例 |
+| `references/03-supplier-extraction.md` | 5 | 需要读合同/补充协议时读：P0/P1/P2 提取、过滤词、账号规则、多账号拆分 |
+| `references/04-whitelist-and-branching.md` | 6 + 7 | 报账单字段取到后读：白名单短路、1/多/0 份协议分流、合同补缺 |
+| `references/05-comparison.md` | 8 | 两侧值准备好后读：单条/多条匹配、空值口径、问题合并 |
+| `references/06-output.md` | 9 | 准备输出时读：JSON 结构、问题分类、描述模板、PASS/HOLD 示例 |
+| `templates/input.example.json` | — | 四类输入的最小样例 |
+| `templates/result-pass.example.json` | 9 | PASS 输出样例 |
+| `templates/result-hold.example.json` | 9 | HOLD 输出样例 |
 
 ## 七、输出前自检
 

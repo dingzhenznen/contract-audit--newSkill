@@ -1,4 +1,14 @@
-# 08 · 核心质检：户名与账号一致性
+# 05 · 核心质检：户名与账号一致性
+
+> 覆盖 workflow 步骤 8：把报账单填写值与合同侧供应商记录逐条比对。
+
+## 本文包含
+
+- 两条核心规则与比对前状态
+- 单条记录 / 多条记录的匹配
+- 空值口径：严格分支 vs 附件兜底
+- 问题合并、问题分类、HOLD/PASS 情形
+- 禁止事项与对应节点
 
 ## 两条规则
 
@@ -13,8 +23,8 @@
 
 进入本步骤时，两侧值应已完成清洗：
 
-- 报账单侧：`account_name`、`account`（见 `references/04-extract-report-fields.md`）；
-- 合同侧：一条或多条 `{供应商名称, 供应商账号}` 记录（见 `references/05-extract-supplier-info.md` / `07-protocol-branching.md`）。
+- 报账单侧：`account_name`、`account`（见 `references/01-input-and-normalization.md`）；
+- 合同侧：一条或多条 `{供应商名称, 供应商账号}` 记录（见 `references/03-supplier-extraction.md` / `references/04-whitelist-and-branching.md`）。
 
 比对使用**清洗后的字符串精确相等**：
 

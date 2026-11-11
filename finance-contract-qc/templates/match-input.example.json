@@ -1,0 +1,20 @@
+{
+  "report": {
+    "account_name": "河南和之也商贸有限公司",
+    "account": "6222020200112233445"
+  },
+  "check_num": 1,
+  "supplements": [
+    {
+      "url": "https://example.com/contract-supplement.pdf",
+      "records": [
+        {
+          "供应商名称": "河南和之也商贸有限公司",
+          "供应商账号": "6222020200112233445",
+          "confidence": 0.95
+        }
+      ]
+    }
+  ],
+  "contracts": []
+}

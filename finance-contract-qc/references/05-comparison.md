@@ -2,6 +2,8 @@
 
 > 覆盖 workflow 步骤 8：把报账单填写值与合同侧供应商记录逐条比对。
 
+> 本文的比对规则已实现为 `scripts/match.mjs`（含 04 的分流与回填）。把提取结果按 `templates/match-input.example.json` 组装后运行脚本，stdout 就是第 09 步的最终 JSON。
+
 ## 本文包含
 
 - 两条核心规则与比对前状态
@@ -34,6 +36,8 @@ accountMatch = reportAccount === supplierAccount;
 ```
 
 不做模糊匹配、不做包含匹配、不做相似度、不做大小写转换。
+
+`scripts/match.mjs` 会先校验提取值：账号长度异常、含字母、91/92 开头的 18 位税号、名称残片、低置信度，都标记为「不可用」。不可用字段只要报账单侧有值，就判 `HOLD` 并在描述里写「无法比对」，不会因为字段被清空而走到容忍分支的 PASS。
 
 ## 单条记录
 
@@ -98,6 +102,8 @@ accountMatch = reportAccount === supplierAccount;
 ```
 
 这个分支只用于「没有更可靠合同信息、只能拿附件兜底」的场景，不能扩大到单份补充协议的严格比对。
+
+进入该分支的具体情形只有三种：没有任何合同附件（`C` 为空）、单条记录回填后仍缺字段、以及工作流显式走 `uXHCwmNyAhHUT3Xd` 的路径。多条记录路径在覆盖后直接进入严格比对，不会切到这里；分流细节见 `references/04-whitelist-and-branching.md`。
 
 ## 问题合并
 

@@ -28,24 +28,38 @@ agent_created: true
 
 报账单样例、字段别名与空值兜底见 `references/01-input-and-normalization.md`。
 
+附件是 PDF 时，先用 `scripts/pdf2img.mjs` 转成页面图片；调用方式见 `references/02-merge-and-classify.md` 的「PDF 转图片」。供应商提取阶段再用 `scripts/ocr-images.mjs` 对页面图 OCR（需 `DASHSCOPE_API_KEY`），然后从 OCR 文本提取，详见 `references/03-supplier-extraction.md`。
+
 ## 二、九步流程
 
 | 步骤 | 动作 | 一句话规则 | 详细规则 |
 |------|------|-----------|----------|
 | 1 | 入口接收 | 收齐报账单、附件列表、电子影像、稽核要素和用户问题 | `references/01-input-and-normalization.md` |
 | 2 | 附件合并去重 | 三路文件汇总成一个 `file_list`，按「文件名 + URL 主干」去重 | `references/02-merge-and-classify.md` |
-| 3 | 文件分类 | 把统一文件分成「合同」「合同补充协议」「其他附件」 | `references/02-merge-and-classify.md` |
+| 3 | 文件分类 | PDF 先转页面图，再把文件分成「合同」「合同补充协议」「其他附件」 | `references/02-merge-and-classify.md` |
 | 4 | 报账单字段提取 | 取户名、账号、合同名称、业务类别并清洗；稽核行号取自稽核要素 | `references/01-input-and-normalization.md` |
-| 5 | 供应商信息提取 | 从补充协议（或合同）中提取「供应商名称 + 供应商账号」 | `references/03-supplier-extraction.md` |
+| 5 | 供应商信息提取 | 先 OCR 页面图，再从 OCR 文本提取「供应商名称 + 供应商账号」 | `references/03-supplier-extraction.md` |
 | 6 | 白名单判断 | 命中白名单企业或名称过短，直接 PASS，不再读合同 | `references/04-whitelist-and-branching.md` |
 | 7 | 协议数量分流 | 1 份直接用；多份先清洗、合并、去空；无补充协议回退合同 | `references/04-whitelist-and-branching.md` |
 | 8 | 核心质检 | 户名 = 供应商名称，账号 = 供应商账号；多份允许任意一条记录匹配 | `references/05-comparison.md` |
 | 9 | 输出判定 | 全通过输出 PASS；否则 HOLD，并带问题分类与附件链接 | `references/06-output.md` |
 
+> 步骤 6–8 是确定性逻辑：白名单、数量分流、合并、回填、精确比对和问题合并都由 `scripts/match.mjs` 完成。提取出供应商记录后调用脚本，不要用自然语言重新实现这些分支。
+>
+> ```bash
+> node "<SKILL_DIR>/scripts/match.mjs" match-input.json --pretty
+> ```
+>
+> 输入见 `templates/match-input.example.json`；stdout 就是最终 JSON，`--debug` 把判定轨迹打到 stderr。
+>
+> 输入是硬契约：`report.account_name` / `report.account` 必须存在（未知传 `""`，两者都空直接报错）；每份附件必须带 `records`，提取失败也要传 `[]`，否则文件数会变、分流会错。提取侧的可选 `confidence` 低于 `0.6`、账号长度不在 6–32、含字母或 91/92 开头的 18 位税号，都会按「不可用」判 HOLD，不会静默放行。
+>
+> 需要完全复刻工作流的宽松口径时加 `--lenient`；它会跳过空报账单、无附件和提取校验三道护栏。
+
 ## 三、判定总原则
 
 - **白名单优先。** 命中白名单或名称长度 < 4，直接 PASS，不进入附件处理。
-- **补充协议优先，合同补缺。** 有补充协议先读补充协议；某字段为空时再用合同同名信息补齐。
+- **补充协议优先，合同回填。** 有补充协议先读补充协议；某字段为空时再用合同同名信息补齐，回填后再按记录条数选择严格或容忍口径。
 - **多份协议允许任意一条匹配。** 名称与账号在同一条记录中同时相等，即视为匹配。
 - **空值口径分两种。** 单份协议、严格比对分支按字面相等；附件兜底分支（提示词明确写「为空则默认对应字段无误」）空字段不判错。按 `references/05-comparison.md` 的分支表执行。
 - **只输出 JSON。** 不写报告、不写表格、不写「以下是质检结果」。
@@ -87,15 +101,19 @@ agent_created: true
 
 ## 六、文件索引
 
-| 文件 | 覆盖步骤 | 何时读 / 内容 |
+| 文件 | 覆盖步骤 | 何时使用 / 内容 |
 |------|----------|----------------|
 | `references/01-input-and-normalization.md` | 1 + 4 | 开始执行时读：四类输入、稽核要素、字段别名、补充信息兜底、清洗 |
 | `references/02-merge-and-classify.md` | 2 + 3 | 拿到附件后读：三路合并、去重、文件分类、对公预付款特例 |
 | `references/03-supplier-extraction.md` | 5 | 需要读合同/补充协议时读：P0/P1/P2 提取、过滤词、账号规则、多账号拆分 |
-| `references/04-whitelist-and-branching.md` | 6 + 7 | 报账单字段取到后读：白名单短路、1/多/0 份协议分流、合同补缺 |
+| `references/04-whitelist-and-branching.md` | 6 + 7 | 报账单字段取到后读：白名单短路、1/多/0 份协议分流、合同回填与二次判定 |
 | `references/05-comparison.md` | 8 | 两侧值准备好后读：单条/多条匹配、空值口径、问题合并 |
 | `references/06-output.md` | 9 | 准备输出时读：JSON 结构、问题分类、描述模板、PASS/HOLD 示例 |
+| `scripts/pdf2img.mjs` | 2 + 3 | 附件是 PDF 时用：转页面图片、输出 `files`/`outDir`、失败降级 |
+| `scripts/ocr-images.mjs` | 5 | 供应商提取前用：页面图 OCR、输出逐页 `.txt` 和合并 `.txt` |
+| `scripts/match.mjs` | 6–8 | 提取完成后用：白名单、分流、合并、回填、比对、问题合并；stdout 即最终 JSON |
 | `templates/input.example.json` | — | 四类输入的最小样例 |
+| `templates/match-input.example.json` | 6–8 | `match.mjs` 的输入样例：报账单 + 已提取的补充协议/合同记录 |
 | `templates/result-pass.example.json` | 9 | PASS 输出样例 |
 | `templates/result-hold.example.json` | 9 | HOLD 输出样例 |
 

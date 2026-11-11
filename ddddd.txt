@@ -2,6 +2,11 @@ curl "http://new-api.crb.cn/v1/chat/completions" \
   -H "Authorization: Bearer sk-t0zBvsbpO2cK0n92ZP00Y3yl0sMeEFaJjN3PDWg0T2KbAkNS" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "deepseek-v4.1-flash",
-    "messages": [{"role": "user", "content": "你是谁？"}]
+    "model": "财务领域-AI质检-qwen3.5-ocr",
+    "messages": [{
+    "role": "user",
+    "content": [
+    {"image": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20241108/ctdzex/biaozhun.jpg"},
+    {"text": "请仅输出图像中的文本内容。"}]
+    }]
   }'
